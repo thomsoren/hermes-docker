@@ -1,6 +1,9 @@
 #!/bin/bash
 # Write Hermes .env from Docker env vars
 mkdir -p /opt/data/.hermes
+mkdir -p /opt/data/whatsapp
+mkdir -p /opt/data/platforms/whatsapp
+
 cat > /opt/data/.hermes/.env << ENVFILE
 GEMINI_API_KEY=${GEMINI_API_KEY}
 WHATSAPP_ENABLED=${WHATSAPP_ENABLED:-false}
@@ -13,6 +16,9 @@ ENVFILE
 cat > /opt/data/.hermes/config.yaml << YAMLFILE
 model: ${HERMES_MODEL:-gemini/gemini-3.1-flash-lite-preview}
 YAMLFILE
+
+# Fix permissions for hermes user (UID 10000)
+chown -R 10000:10000 /opt/data
 
 # Hand off to the original entrypoint
 exec /opt/hermes/docker/entrypoint.sh gateway run
